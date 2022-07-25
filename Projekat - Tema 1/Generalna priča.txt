@@ -1,0 +1,39 @@
+Opis i analiza korištenog dataset-a:
+- Dataset ima 10000 redova gdje svaki red ima 7 kolona
+- Nazivi kolona su redom: slovo, a, b, c, d, e, f
+- Postoje redovi kojima su prazna neka polja (to prazno polje može biti u bilo kojoj od kolona)
+- Postoji jedan red kojem je polje prve kolone string 'F'
+- Sve redove kojima je prazno prvo ili zadnje polje sam obrisao nakon učitavanja kompletnog dataset-a (takvih je bilo 8)
+- Dok sam polja kod redova kojima su prazna polja između nulte i zadnje kolone dopunjavao sa vrijednosti
+  aritmetičke sredine odgovarajućeg polja preostalih redova kojima je to polje neprazno
+- Nakon učitavanja dataset-a polja kolona 0, 4 i 5 su stringovi, dok su polja preostalih kolona realne vrijednosti
+- Kolona 6 predstavlja 'duplo' kolonu 1, stoga kolonu 6 nisam uzeo  u razmatranje
+
+Grafički prikaz podataka i rezultata:
+- Podatke sam prikazivao grafički koristeći fju boxplot iz bibliotee seaborn, pomoću ovog grafičkog prikaza sam vršio
+  detekciju anomalija (tj. odudarajućih podataka)
+- Rezultate sam grafički prikazao koristeći fje scatter i show iz biblioteke matplotlib.pyplot
+  - Preciznije, prvo sam prikazao prvih 50 predikcija BaggingTreeRegressor-a (koji se pokazao kao najbolji) zajedno sa
+    stvarnim vrijednostima prvih 50 redova y_test-a (zelenom bojom predikcije, crvenom stvarne vrijednosti)
+  - Isto sam uradio poslije toga i za sve redove iz predikcija, a samim tim i y-testa
+
+Korištenje standardnih metrika za računanje uspješnosti algoritma:
+- Koristio sam mean_absolute_error i mean_squared_error iz biblioteke sklearn.metrics za računanje uspješnosti algoritma
+- mean_absolute_error - vraća prosječno odstupanje jedne predikcije od stvarne vrijednosti po apsulutnoj vrijednosti
+- mean_squared_error - vraća prosječno kvadratno odstupanje jedne predikcije od stvarne vrijednosti 
+  (sve što je veće odstupanje greška je veća, stoga je ova greška veća od prve kod svakog od Regressor-a)
+
+Diskusija dobijenih rezultata:
+- Koristio sam 5 algoritama za procjenu zadnje kolone na osnovu prvih 6, u mom slučaju prvih 5, jer je 6ta redudantna na drugu..
+- Najbolje se pokazao BaggingTreeRegressor koji vraća prosječnu absulutnu grešku oko 0.5, koja je najmanja od svih ostalih algoritama,
+  dok također ima i najmanju kvadratnu grešku.
+- Drugi najbolji je DecisionTreeRegressor, jer ima drugu najmanju abusulutnu i kvadratnu grešku.
+- Linearni regressor se nije proslavio, jednostavno zato što sa njim pokušavam linearnom fjom procijeniti na osnovu 5 kolona šestu
+  što nije zgodno, zbog dimnezije u kojoj se ta procjena treba izvršiti u mom slučaju to je 6D
+- KNN (K nearest neighbors / k najbližih susjeda) se također nije proslavio iz sličnih razloga kao i linearni regressor, jer on radi 
+  na principu "kojih kategorija ima oko mene najviše, u tu kategoriju spadam i ja" što nije dobra logika za naš dataset
+- SVR (Regresija vektora podrške) je supervised algoritam koji se koristi za predviđanje diskretnih vrijednosti. 
+  SVR koristi isti princip kao i SVM. Osnovna ideja iza SVR-a je pronaći najbolju liniju.
+  Zašto je SVR bolji od linearne regresije? Dok modeli linearne regresije minimiziraju grešku između stvarnih i predviđenih 
+  vrijednosti kroz liniju najboljeg uklapanja, SVR uspijeva uklopiti najbolju liniju unutar praga vrijednosti, 
+  koji se inače naziva epsilon-neosjetljiva cijev (epsilon-insensitive tube).
